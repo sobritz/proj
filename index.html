@@ -217,20 +217,96 @@
 	<script src="assets/js/demo.js"></script>
 
 	<script type="text/javascript">
-    	$(document).ready(function(){
+    	$(function () {
+    $(document).ready(function () {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
 
-        	demo.initChartist();
+				let lastvar = Math.random() * 4000 + 4000;
 
-        	$.notify({
-            	icon: 'pe-7s-gift',
-            	message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
+        Highcharts.chart('container', {
+            chart: {
+                type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                events: {
+                    load: function () {
 
-            },{
-                type: 'info',
-                timer: 4000
-            });
+                        // set up the updating of the chart each second
 
-    	});
+                        var series = this.series[0];
+                        setInterval(function () {
+                        		var tmp = (lastvar + (Math.random() * 2000 - 1000)) % 8000;
+                            if (tmp < 500) {
+                            	tmp = tmp + 5000;
+                            }
+                            var x = (new Date()).getTime(), // current time
+                                y = tmp;
+                            series.addPoint([x, y], true, true);
+                            lastvar = tmp;
+                        }, 1000);
+                    }
+                }
+            },
+            title: {
+                text: 'Live random data'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                title: {
+                    text: 'Value'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: 'Random data',
+                data: (function () {
+                    // generate an array of random data
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+
+                    for (i = -19; i <= 0; i += 1) {
+                    		var tmp = (lastvar + (Math.random() * 2000 - 1000)) % 8000;
+                        if (tmp < 500) {
+                          tmp = tmp + 5000;
+                        }
+                        data.push({
+                            x: time + i * 1000,
+                            y: tmp
+                        });
+                        lastvar = tmp;
+                    }
+                    return data;
+                }())
+            }]
+        });
+    });
+});
+
 	</script>
 
 </html>
